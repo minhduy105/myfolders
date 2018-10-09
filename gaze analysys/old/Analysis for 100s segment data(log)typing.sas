@@ -1,20 +1,24 @@
-
 libname sql 'SAS-library';
 
-FILENAME REFFILE '/folders/myfolders/gaze analysys/DiscriptiveData_4gazes_100sec.csv';
+FILENAME REFFILE '/folders/myfolders/gaze analysys/DiscriptiveData_5talks_H_100sec.csv';
 
 PROC IMPORT DATAFILE=REFFILE
 	DBMS=CSV
-	OUT=WORK.IMPORT
+	OUT=WORK.IMPORT1
 	REPLACE;
 	GETNAMES=YES;	
 RUN;
 
-PROC CONTENTS DATA=WORK.IMPORT; RUN;
+PROC CONTENTS DATA=WORK.IMPORT1; RUN;
+
+data WORK.IMPORT;
+	set WORK.IMPORT1 (keep = Dyad -- S_BodyOnly_Min);
+	where TalkType = 2;
+run;
 
 /* -----------------get data for conversation 1-----------------------*/
 data Gaze1;
-   set WORK.IMPORT (keep = Dyad Cov SectionStartTime Duration GazeType);
+   set WORK.IMPORT (keep = Dyad -- S_BodyOnly_Min);
 	where Cov = 1;
 run;
 
@@ -32,86 +36,149 @@ Face = 4
 
 /*---------------------------get the gaze data for the first 100 seconds----------------------------*/
 proc sql; 
+	create table Around_1_0s_sub as
+   	select Dyad, 
+   		sum(S_Around_Mean/30.0*S_Around_Frequency) as TotalDurationAroundLog1_0s,
+   		sum(S_Around_Frequency) as FrequencyAround1_0s
+		from WORK.Gaze1
+		where SectionStartTime = 0
+		group by Dyad;
+quit;
+proc sql; 
 	create table Around_1_0s as
-   	select Dyad, sum(log(Duration/30.0))as TotalDurationAroundLog1_0s,
-   		mean(log(Duration/30.0)) as MeanDurationAroundLog1_0s,
-   		count(*) as FrequencyAround1_0s
-		from WORK.Gaze1
-		where GazeType = 1 and SectionStartTime = 0
-		group by Dyad;
+   	select Dyad, log(TotalDurationAroundLog1_0s) as TotalDurationAroundLog1_0s ,
+   		log(TotalDurationAroundLog1_0s*1.0/FrequencyAround1_0s) as MeanDurationAroundLog1_0s,
+   		FrequencyAround1_0s
+		from Around_1_0s_sub;
 quit;
 
-proc sql;
-	create table Monitor_1_0s as
-   	select Dyad, sum(log(Duration/30.0)) as TotalDurationMonitorLog1_0s,
-   		mean(log(Duration/30.0)) as MeanDurationMonitorLog1_0s,
-   		count(*) as FrequencyMonitor1_0s
+
+proc sql; 
+	create table Face_1_0s_sub as
+   	select Dyad, 
+   		sum(S_Face_Mean/30.0*S_Face_Frequency) as TotalDurationFaceLog1_0s,
+   		sum(S_Face_Frequency) as FrequencyFace1_0s
 		from WORK.Gaze1
-		where GazeType = 2 and SectionStartTime = 0
+		where SectionStartTime = 0
 		group by Dyad;
 quit;
-
-proc sql;
-	create table Keyboard_1_0s as
-   	select Dyad, sum(log(Duration/30.0)) as TotalDurationKeyboardLog1_0s,
-   		mean(log(Duration/30.0)) as MeanDurationKeyboardLog1_0s,
-   		count(*) as FrequencyKeyboard1_0s
-		from WORK.Gaze1
-		where GazeType = 3 and SectionStartTime = 0
-		group by Dyad;
-quit;
-
-proc sql;
+proc sql; 
 	create table Face_1_0s as
-   	select Dyad, sum(log(Duration/30.0)) as TotalDurationFaceLog1_0s,
-   		mean(log(Duration/30.0)) as MeanDurationFaceLog1_0s,
-   		count(*) as FrequencyFace1_0s
+   	select Dyad, log(TotalDurationFaceLog1_0s) as TotalDurationFaceLog1_0s ,
+   		log(TotalDurationFaceLog1_0s*1.0/FrequencyFace1_0s) as MeanDurationFaceLog1_0s,
+   		FrequencyFace1_0s
+		from Face_1_0s_sub;
+quit;
+
+
+proc sql; 
+	create table Keyboard_1_0s_sub as
+   	select Dyad, 
+   		sum(S_Keyboard_Mean/30.0*S_Keyboard_Frequency) as TotalDurationKeyboardLog1_0s,
+   		sum(S_Keyboard_Frequency) as FrequencyKeyboard1_0s
 		from WORK.Gaze1
-		where GazeType = 4 and SectionStartTime = 0
+		where SectionStartTime = 0
 		group by Dyad;
 quit;
+proc sql; 
+	create table Keyboard_1_0s as
+   	select Dyad, log(TotalDurationKeyboardLog1_0s) as TotalDurationKeyboardLog1_0s ,
+   		log(TotalDurationKeyboardLog1_0s*1.0/FrequencyKeyboard1_0s) as MeanDurationKeyboardLog1_0s,
+   		FrequencyKeyboard1_0s
+		from Keyboard_1_0s_sub;
+quit;
+
+
+proc sql; 
+	create table Monitor_1_0s_sub as
+   	select Dyad, 
+   		sum(S_Monitor_Mean/30.0*S_Monitor_Frequency) as TotalDurationMonitorLog1_0s,
+   		sum(S_Monitor_Frequency) as FrequencyMonitor1_0s
+		from WORK.Gaze1
+		where SectionStartTime = 0
+		group by Dyad;
+quit;
+proc sql; 
+	create table Monitor_1_0s as
+   	select Dyad, log(TotalDurationMonitorLog1_0s) as TotalDurationMonitorLog1_0s ,
+   		log(TotalDurationMonitorLog1_0s*1.0/FrequencyMonitor1_0s) as MeanDurationMonitorLog1_0s,
+   		FrequencyMonitor1_0s
+		from Monitor_1_0s_sub;
+quit;
+
 
 /*---------------------------get the gaze data for the last 100 seconds----------------------------*/
+
+proc sql; 
+	create table Around_1_200s_sub as
+   	select Dyad, 
+   		sum(S_Around_Mean/30.0*S_Around_Frequency) as TotalDurationAroundLog1_200s,
+   		sum(S_Around_Frequency) as FrequencyAround1_200s
+		from WORK.Gaze1
+		where SectionStartTime = 6000
+		group by Dyad;
+quit;
 proc sql; 
 	create table Around_1_200s as
-   	select Dyad, sum(log(Duration/30.0)) as TotalDurationAroundLog1_200s,
-   		mean(log(Duration/30.0)) as MeanDurationAroundLog1_200s,
-   		count(*) as FrequencyAround1_200s
-		from WORK.Gaze1
-		where GazeType = 1 and SectionStartTime = 6000
-		group by Dyad;
+   	select Dyad, log(TotalDurationAroundLog1_200s) as TotalDurationAroundLog1_200s ,
+   		log(TotalDurationAroundLog1_200s*1.0/FrequencyAround1_200s) as MeanDurationAroundLog1_200s,
+   		FrequencyAround1_200s
+		from Around_1_200s_sub;
 quit;
 
-proc sql;
-	create table Monitor_1_200s as
-   	select Dyad, sum(log(Duration/30.0)) as TotalDurationMonitorLog1_200s,
-   		mean(log(Duration/30.0)) as MeanDurationMonitorLog1_200s,
-   		count(*) as FrequencyMonitor1_200s
+
+proc sql; 
+	create table Face_1_200s_sub as
+   	select Dyad, 
+   		sum(S_Face_Mean/30.0*S_Face_Frequency) as TotalDurationFaceLog1_200s,
+   		sum(S_Face_Frequency) as FrequencyFace1_200s
 		from WORK.Gaze1
-		where GazeType = 2 and SectionStartTime = 6000
+		where SectionStartTime = 6000
 		group by Dyad;
 quit;
-
-proc sql;
-	create table Keyboard_1_200s as
-   	select Dyad, sum(log(Duration/30.0)) as TotalDurationKeyboardLog1_200s,
-   		mean(log(Duration/30.0)) as MeanDurationKeyboardLog1_200s,
-   		count(*) as FrequencyKeyboard1_200s
-		from WORK.Gaze1
-		where GazeType = 3 and SectionStartTime = 6000
-		group by Dyad;
-quit;
-
-proc sql;
+proc sql; 
 	create table Face_1_200s as
-   	select Dyad, sum(log(Duration/30.0)) as TotalDurationFaceLog1_200s,
-   		mean(log(Duration/30.0)) as MeanDurationFaceLog1_200s,
-   		count(*) as FrequencyFace1_200s
-		from WORK.Gaze1
-		where GazeType = 4 and SectionStartTime = 6000
-		group by Dyad;
+   	select Dyad, log(TotalDurationFaceLog1_200s) as TotalDurationFaceLog1_200s ,
+   		log(TotalDurationFaceLog1_200s*1.0/FrequencyFace1_200s) as MeanDurationFaceLog1_200s,
+   		FrequencyFace1_200s
+		from Face_1_200s_sub;
 quit;
 
+
+proc sql; 
+	create table Keyboard_1_200s_sub as
+   	select Dyad, 
+   		sum(S_Keyboard_Mean/30.0*S_Keyboard_Frequency) as TotalDurationKeyboardLog1_200s,
+   		sum(S_Keyboard_Frequency) as FrequencyKeyboard1_200s
+		from WORK.Gaze1
+		where SectionStartTime = 6000
+		group by Dyad;
+quit;
+proc sql; 
+	create table Keyboard_1_200s as
+   	select Dyad, log(TotalDurationKeyboardLog1_200s) as TotalDurationKeyboardLog1_200s ,
+   		log(TotalDurationKeyboardLog1_200s*1.0/FrequencyKeyboard1_200s) as MeanDurationKeyboardLog1_200s,
+   		FrequencyKeyboard1_200s
+		from Keyboard_1_200s_sub;
+quit;
+
+
+proc sql; 
+	create table Monitor_1_200s_sub as
+   	select Dyad, 
+   		sum(S_Monitor_Mean/30.0*S_Monitor_Frequency) as TotalDurationMonitorLog1_200s,
+   		sum(S_Monitor_Frequency) as FrequencyMonitor1_200s
+		from WORK.Gaze1
+		where SectionStartTime = 6000
+		group by Dyad;
+quit;
+proc sql; 
+	create table Monitor_1_200s as
+   	select Dyad, log(TotalDurationMonitorLog1_200s) as TotalDurationMonitorLog1_200s ,
+   		log(TotalDurationMonitorLog1_200s*1.0/FrequencyMonitor1_200s) as MeanDurationMonitorLog1_200s,
+   		FrequencyMonitor1_200s
+		from Monitor_1_200s_sub;
+quit;
 
 /*Join all the gaze data together*/
 proc sql;
@@ -131,7 +198,7 @@ quit;
 
 /* -----------------get data for conversation 2-----------------------*/
 data Gaze2;
-   set WORK.IMPORT (keep = Dyad Cov SectionStartTime Duration GazeType);
+   set WORK.IMPORT (keep = Dyad -- S_BodyOnly_Min);
 	where Cov = 2;
 run;
 
@@ -149,84 +216,148 @@ Face = 4
 
 /*---------------------------get the gaze data for the first 100 seconds----------------------------*/
 proc sql; 
+	create table Around_2_0s_sub as
+   	select Dyad, 
+   		sum(S_Around_Mean/30.0*S_Around_Frequency) as TotalDurationAroundLog2_0s,
+   		sum(S_Around_Frequency) as FrequencyAround2_0s
+		from WORK.Gaze2
+		where SectionStartTime = 0
+		group by Dyad;
+quit;
+proc sql; 
 	create table Around_2_0s as
-   	select Dyad, sum(log(Duration/30.0)) as TotalDurationAroundLog2_0s,
-   		mean(log(Duration/30.0)) as MeanDurationAroundLog2_0s,
-   		count(*) as FrequencyAround2_0s
-		from WORK.Gaze2
-		where GazeType = 1 and SectionStartTime = 0
-		group by Dyad;
+   	select Dyad, log(TotalDurationAroundLog2_0s) as TotalDurationAroundLog2_0s ,
+   		log(TotalDurationAroundLog2_0s*1.0/FrequencyAround2_0s) as MeanDurationAroundLog2_0s,
+   		FrequencyAround2_0s
+		from Around_2_0s_sub;
 quit;
 
-proc sql;
-	create table Monitor_2_0s as
-   	select Dyad, sum(log(Duration/30.0)) as TotalDurationMonitorLog2_0s,
-   		mean(log(Duration/30.0)) as MeanDurationMonitorLog2_0s,
-   		count(*) as FrequencyMonitor2_0s
+
+proc sql; 
+	create table Face_2_0s_sub as
+   	select Dyad, 
+   		sum(S_Face_Mean/30.0*S_Face_Frequency) as TotalDurationFaceLog2_0s,
+   		sum(S_Face_Frequency) as FrequencyFace2_0s
 		from WORK.Gaze2
-		where GazeType = 2 and SectionStartTime = 0
+		where SectionStartTime = 0
 		group by Dyad;
 quit;
-
-proc sql;
-	create table Keyboard_2_0s as
-   	select Dyad, sum(log(Duration/30.0)) as TotalDurationKeyboardLog2_0s,
-   		mean(log(Duration/30.0)) as MeanDurationKeyboardLog2_0s,
-   		count(*) as FrequencyKeyboard2_0s
-		from WORK.Gaze2
-		where GazeType = 3 and SectionStartTime = 0
-		group by Dyad;
-quit;
-
-proc sql;
+proc sql; 
 	create table Face_2_0s as
-   	select Dyad, sum(log(Duration/30.0)) as TotalDurationFaceLog2_0s,
-   		mean(log(Duration/30.0)) as MeanDurationFaceLog2_0s,
-   		count(*) as FrequencyFace2_0s
+   	select Dyad, log(TotalDurationFaceLog2_0s) as TotalDurationFaceLog2_0s ,
+   		log(TotalDurationFaceLog2_0s*1.0/FrequencyFace2_0s) as MeanDurationFaceLog2_0s,
+   		FrequencyFace2_0s
+		from Face_2_0s_sub;
+quit;
+
+
+proc sql; 
+	create table Keyboard_2_0s_sub as
+   	select Dyad, 
+   		sum(S_Keyboard_Mean/30.0*S_Keyboard_Frequency) as TotalDurationKeyboardLog2_0s,
+   		sum(S_Keyboard_Frequency) as FrequencyKeyboard2_0s
 		from WORK.Gaze2
-		where GazeType = 4 and SectionStartTime = 0
+		where SectionStartTime = 0
 		group by Dyad;
 quit;
+proc sql; 
+	create table Keyboard_2_0s as
+   	select Dyad, log(TotalDurationKeyboardLog2_0s) as TotalDurationKeyboardLog2_0s ,
+   		log(TotalDurationKeyboardLog2_0s*1.0/FrequencyKeyboard2_0s) as MeanDurationKeyboardLog2_0s,
+   		FrequencyKeyboard2_0s
+		from Keyboard_2_0s_sub;
+quit;
+
+
+proc sql; 
+	create table Monitor_2_0s_sub as
+   	select Dyad, 
+   		sum(S_Monitor_Mean/30.0*S_Monitor_Frequency) as TotalDurationMonitorLog2_0s,
+   		sum(S_Monitor_Frequency) as FrequencyMonitor2_0s
+		from WORK.Gaze2
+		where SectionStartTime = 0
+		group by Dyad;
+quit;
+proc sql; 
+	create table Monitor_2_0s as
+   	select Dyad, log(TotalDurationMonitorLog2_0s) as TotalDurationMonitorLog2_0s ,
+   		log(TotalDurationMonitorLog2_0s*1.0/FrequencyMonitor2_0s) as MeanDurationMonitorLog2_0s,
+   		FrequencyMonitor2_0s
+		from Monitor_2_0s_sub;
+quit;
+
 
 /*---------------------------get the gaze data for the last 100 seconds----------------------------*/
+
+proc sql; 
+	create table Around_2_200s_sub as
+   	select Dyad, 
+   		sum(S_Around_Mean/30.0*S_Around_Frequency) as TotalDurationAroundLog2_200s,
+   		sum(S_Around_Frequency) as FrequencyAround2_200s
+		from WORK.Gaze2
+		where SectionStartTime = 6000
+		group by Dyad;
+quit;
 proc sql; 
 	create table Around_2_200s as
-   	select Dyad, sum(log(Duration/30.0)) as TotalDurationAroundLog2_200s,
-   		mean(log(Duration/30.0)) as MeanDurationAroundLog2_200s,
-   		count(*) as FrequencyAround2_200s
-		from WORK.Gaze2
-		where GazeType = 1 and SectionStartTime = 6000
-		group by Dyad;
+   	select Dyad, log(TotalDurationAroundLog2_200s) as TotalDurationAroundLog2_200s ,
+   		log(TotalDurationAroundLog2_200s*1.0/FrequencyAround2_200s) as MeanDurationAroundLog2_200s,
+   		FrequencyAround2_200s
+		from Around_2_200s_sub;
 quit;
 
-proc sql;
-	create table Monitor_2_200s as
-   	select Dyad, sum(log(Duration/30.0)) as TotalDurationMonitorLog2_200s,
-   		mean(log(Duration/30.0)) as MeanDurationMonitorLog2_200s,
-   		count(*) as FrequencyMonitor2_200s
+
+proc sql; 
+	create table Face_2_200s_sub as
+   	select Dyad, 
+   		sum(S_Face_Mean/30.0*S_Face_Frequency) as TotalDurationFaceLog2_200s,
+   		sum(S_Face_Frequency) as FrequencyFace2_200s
 		from WORK.Gaze2
-		where GazeType = 2 and SectionStartTime = 6000
+		where SectionStartTime = 6000
 		group by Dyad;
 quit;
-
-proc sql;
-	create table Keyboard_2_200s as
-   	select Dyad, sum(log(Duration/30.0)) as TotalDurationKeyboardLog2_200s,
-   		mean(log(Duration/30.0)) as MeanDurationKeyboardLog2_200s,
-   		count(*) as FrequencyKeyboard2_200s
-		from WORK.Gaze2
-		where GazeType = 3 and SectionStartTime = 6000
-		group by Dyad;
-quit;
-
-proc sql;
+proc sql; 
 	create table Face_2_200s as
-   	select Dyad, sum(log(Duration/30.0)) as TotalDurationFaceLog2_200s,
-   		mean(log(Duration/30.0)) as MeanDurationFaceLog2_200s,
-   		count(*) as FrequencyFace2_200s
+   	select Dyad, log(TotalDurationFaceLog2_200s) as TotalDurationFaceLog2_200s ,
+   		log(TotalDurationFaceLog2_200s*1.0/FrequencyFace2_200s) as MeanDurationFaceLog2_200s,
+   		FrequencyFace2_200s
+		from Face_2_200s_sub;
+quit;
+
+
+proc sql; 
+	create table Keyboard_2_200s_sub as
+   	select Dyad, 
+   		sum(S_Keyboard_Mean/30.0*S_Keyboard_Frequency) as TotalDurationKeyboardLog2_200s,
+   		sum(S_Keyboard_Frequency) as FrequencyKeyboard2_200s
 		from WORK.Gaze2
-		where GazeType = 4 and SectionStartTime = 6000
+		where SectionStartTime = 6000
 		group by Dyad;
+quit;
+proc sql; 
+	create table Keyboard_2_200s as
+   	select Dyad, log(TotalDurationKeyboardLog2_200s) as TotalDurationKeyboardLog2_200s ,
+   		log(TotalDurationKeyboardLog2_200s*1.0/FrequencyKeyboard2_200s) as MeanDurationKeyboardLog2_200s,
+   		FrequencyKeyboard2_200s
+		from Keyboard_2_200s_sub;
+quit;
+
+
+proc sql; 
+	create table Monitor_2_200s_sub as
+   	select Dyad, 
+   		sum(S_Monitor_Mean/30.0*S_Monitor_Frequency) as TotalDurationMonitorLog2_200s,
+   		sum(S_Monitor_Frequency) as FrequencyMonitor2_200s
+		from WORK.Gaze2
+		where SectionStartTime = 6000
+		group by Dyad;
+quit;
+proc sql; 
+	create table Monitor_2_200s as
+   	select Dyad, log(TotalDurationMonitorLog2_200s) as TotalDurationMonitorLog2_200s ,
+   		log(TotalDurationMonitorLog2_200s*1.0/FrequencyMonitor2_200s) as MeanDurationMonitorLog2_200s,
+   		FrequencyMonitor2_200s
+		from Monitor_2_200s_sub;
 quit;
 
 
@@ -254,6 +385,16 @@ proc sql;
 		from WORK.Summary_1 D1	
 		full join WORK.Summary_2 D2 on D1.Dyad = D2.Dyad;
 quit;	
+
+
+/*set all null value to 0*/
+data Summary;
+	set Summary;
+	array change _numeric_;
+		do over change;
+			if change=. then change=0;
+		end;
+run;
 
 /*--------------------------------------Summary of the data-------------------------------------------*/
 
