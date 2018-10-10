@@ -1,3 +1,5 @@
+/*DO NOT HAVE EXPORT CSV IN THIS FILE*/
+
 FILENAME REFFILE '/folders/myfolders/gaze analysys/DiscriptiveData_4gazes_100sec.csv';
 
 PROC IMPORT DATAFILE=REFFILE

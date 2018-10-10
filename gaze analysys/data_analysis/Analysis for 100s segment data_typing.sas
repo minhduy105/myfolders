@@ -14,7 +14,6 @@ RUN;
 
 PROC CONTENTS DATA=WORK.IMPORT1; RUN;
 
-
 proc sql;
 	create table Summary as 
 	select * 
