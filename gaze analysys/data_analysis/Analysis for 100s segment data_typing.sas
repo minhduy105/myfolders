@@ -34,14 +34,14 @@ run;
 /*--------------------------------------Summary of the data-------------------------------------------*/
 
 proc means data=Summary n mean max min range std fw=8; /*fw is field width, which is how big the table is gonna be*/
-   var TotalDurationAroundLog1_0s TotalDurationAroundLog1_200s TotalDurationAroundLog2_0s TotalDurationAroundLog2_200s 
-   		TotalDurationFaceLog1_0s TotalDurationFaceLog1_200s TotalDurationFaceLog2_0s TotalDurationFaceLog2_200s;
+   var TotalDurationAround1_0s TotalDurationAround1_200s TotalDurationAround2_0s TotalDurationAround2_200s 
+   		TotalDurationFace1_0s TotalDurationFace1_200s TotalDurationFace2_0s TotalDurationFace2_200s;
    title 'Summary of Total gaze time in 4 categories and 2 conversation';
 run;
 
 proc means data=Summary n mean max min range std fw=8; /*fw is field width, which is how big the table is gonna be*/
-   var MeanDurationAroundLog1_0s MeanDurationAroundLog1_200s MeanDurationAroundLog2_0s MeanDurationAroundLog2_200s 
-   		MeanDurationFaceLog1_0s MeanDurationFaceLog1_200s MeanDurationFaceLog2_0s MeanDurationFaceLog2_200s;
+   var MeanDurationAround1_0s MeanDurationAround1_200s MeanDurationAround2_0s MeanDurationAround2_200s 
+   		MeanDurationFace1_0s MeanDurationFace1_200s MeanDurationFace2_0s MeanDurationFace2_200s;
    title 'Summary of Mean gaze time in 4 categories and 2 conversation';
 run;
 
@@ -54,29 +54,29 @@ run;
 /*-------------------------Running the Paired T-Test for gazes between conversation------------------------------------------*/
 proc ttest data=Summary order=data
            alpha=0.05 test=diff sides=2; /* two-sided test of diff between group means */
-   paired TotalDurationAroundLog1_0s*TotalDurationAroundLog1_200s
-   			TotalDurationAroundLog2_0s*TotalDurationAroundLog2_200s
-   			TotalDurationAroundLog1_0s*TotalDurationAroundLog2_0s
-			TotalDurationAroundLog1_200s*TotalDurationAroundLog2_0s
-   			TotalDurationAroundLog1_200s*TotalDurationAroundLog2_200s
+   paired TotalDurationAround1_0s*TotalDurationAround1_200s
+   			TotalDurationAround2_0s*TotalDurationAround2_200s
+   			TotalDurationAround1_0s*TotalDurationAround2_0s
+			TotalDurationAround1_200s*TotalDurationAround2_0s
+   			TotalDurationAround1_200s*TotalDurationAround2_200s
    		
-   			TotalDurationFaceLog1_0s*TotalDurationFaceLog1_200s
-   			TotalDurationFaceLog2_0s*TotalDurationFaceLog2_200s
-   			TotalDurationFaceLog1_0s*TotalDurationFaceLog2_0s
-   			TotalDurationFaceLog1_200s*TotalDurationFaceLog2_0s
-   			TotalDurationFaceLog1_200s*TotalDurationFaceLog2_200s
+   			TotalDurationFace1_0s*TotalDurationFace1_200s
+   			TotalDurationFace2_0s*TotalDurationFace2_200s
+   			TotalDurationFace1_0s*TotalDurationFace2_0s
+   			TotalDurationFace1_200s*TotalDurationFace2_0s
+   			TotalDurationFace1_200s*TotalDurationFace2_200s
    			
-			MeanDurationAroundLog1_0s*MeanDurationAroundLog1_200s 
-			MeanDurationAroundLog2_0s*MeanDurationAroundLog2_200s
-			MeanDurationAroundLog1_0s*MeanDurationAroundLog2_0s
-			MeanDurationAroundLog1_200s*MeanDurationAroundLog2_0s
-			MeanDurationAroundLog1_200s*MeanDurationAroundLog2_200s
+			MeanDurationAround1_0s*MeanDurationAround1_200s 
+			MeanDurationAround2_0s*MeanDurationAround2_200s
+			MeanDurationAround1_0s*MeanDurationAround2_0s
+			MeanDurationAround1_200s*MeanDurationAround2_0s
+			MeanDurationAround1_200s*MeanDurationAround2_200s
 			
-			MeanDurationFaceLog1_0s*MeanDurationFaceLog1_200s
-			MeanDurationFaceLog2_0s*MeanDurationFaceLog2_200s
-			MeanDurationFaceLog1_0s*MeanDurationFaceLog2_0s
-			MeanDurationFaceLog1_200s*MeanDurationFaceLog2_0s
-			MeanDurationFaceLog1_200s*MeanDurationFaceLog2_200s
+			MeanDurationFace1_0s*MeanDurationFace1_200s
+			MeanDurationFace2_0s*MeanDurationFace2_200s
+			MeanDurationFace1_0s*MeanDurationFace2_0s
+			MeanDurationFace1_200s*MeanDurationFace2_0s
+			MeanDurationFace1_200s*MeanDurationFace2_200s
 			
 			FrequencyAround1_0s*FrequencyAround1_200s 
 			FrequencyAround2_0s*FrequencyAround2_200s
@@ -94,23 +94,23 @@ run;
 
 /*------------------------------Running the Correlation Test------------------------------------------*/
 proc corr data=Summary;
-	var TotalDurationAroundLog1_0s TotalDurationAroundLog1_200s 
-		TotalDurationAroundLog2_0s TotalDurationAroundLog2_200s ;
+	var TotalDurationAround1_0s TotalDurationAround1_200s 
+		TotalDurationAround2_0s TotalDurationAround2_200s ;
 run;
 
 proc corr data=Summary;
-	var TotalDurationFaceLog1_0s TotalDurationFaceLog1_200s 
-		TotalDurationFaceLog2_0s TotalDurationFaceLog2_200s ;
+	var TotalDurationFace1_0s TotalDurationFace1_200s 
+		TotalDurationFace2_0s TotalDurationFace2_200s ;
 run;
 
 proc corr data=Summary;
-	var MeanDurationAroundLog1_0s MeanDurationAroundLog1_200s 
-		MeanDurationAroundLog2_0s MeanDurationAroundLog2_200s ;
+	var MeanDurationAround1_0s MeanDurationAround1_200s 
+		MeanDurationAround2_0s MeanDurationAround2_200s ;
 run;
 
 proc corr data=Summary;
-	var MeanDurationFaceLog1_0s MeanDurationFaceLog1_200s 
-		MeanDurationFaceLog2_0s MeanDurationFaceLog2_200s ;
+	var MeanDurationFace1_0s MeanDurationFace1_200s 
+		MeanDurationFace2_0s MeanDurationFace2_200s ;
 run;
 
 proc corr data=Summary;
@@ -143,30 +143,30 @@ quit;
 proc sql;/*create new table for box-plot, need ID or Union will combine similar value*/
 create table Summary_box_plot as 
 	select Dyad, AroundID as GazeType, Cov1 as Conversation, TimeStart0 as TimeStart,
-			TotalDurationAroundLog1_0s as TotalDurationLog, MeanDurationAroundLog1_0s as MeanDurationLog,
+			TotalDurationAround1_0s as TotalDurationLog, MeanDurationAround1_0s as MeanDurationLog,
 			FrequencyAround1_0s as Frequency from Summary
 	union
-	select Dyad, AroundID, Cov1, TimeStart2, TotalDurationAroundLog1_200s, 
-			MeanDurationAroundLog1_200s, FrequencyAround1_200s  from Summary
+	select Dyad, AroundID, Cov1, TimeStart2, TotalDurationAround1_200s, 
+			MeanDurationAround1_200s, FrequencyAround1_200s  from Summary
 	union
-	select Dyad, AroundID, Cov2, TimeStart0, TotalDurationAroundLog2_0s, 
-			MeanDurationAroundLog2_0s, FrequencyAround2_0s  from Summary
+	select Dyad, AroundID, Cov2, TimeStart0, TotalDurationAround2_0s, 
+			MeanDurationAround2_0s, FrequencyAround2_0s  from Summary
 	union
-	select Dyad, AroundID, Cov2, TimeStart2, TotalDurationAroundLog2_200s, 
-			MeanDurationAroundLog2_200s, FrequencyAround2_200s  from Summary
+	select Dyad, AroundID, Cov2, TimeStart2, TotalDurationAround2_200s, 
+			MeanDurationAround2_200s, FrequencyAround2_200s  from Summary
 	union
 
-	select Dyad, FaceID,Cov1, TimeStart0, TotalDurationFaceLog1_0s , 
-			MeanDurationFaceLog1_0s, FrequencyFace1_0s  from Summary
+	select Dyad, FaceID,Cov1, TimeStart0, TotalDurationFace1_0s , 
+			MeanDurationFace1_0s, FrequencyFace1_0s  from Summary
 	union
-	select Dyad,FaceID,Cov1, TimeStart2, TotalDurationFaceLog1_200s , 
-			MeanDurationFaceLog1_200s, FrequencyFace1_200s  from Summary
+	select Dyad,FaceID,Cov1, TimeStart2, TotalDurationFace1_200s , 
+			MeanDurationFace1_200s, FrequencyFace1_200s  from Summary
 	union
-	select Dyad, FaceID,Cov2, TimeStart0, TotalDurationFaceLog2_0s , 
-			MeanDurationFaceLog2_0s, FrequencyFace2_0s  from Summary
+	select Dyad, FaceID,Cov2, TimeStart0, TotalDurationFace2_0s , 
+			MeanDurationFace2_0s, FrequencyFace2_0s  from Summary
 	union
-	select Dyad, FaceID,Cov2, TimeStart2, TotalDurationFaceLog2_200s , 
-			MeanDurationFaceLog2_200s, FrequencyFace2_200s  from Summary
+	select Dyad, FaceID,Cov2, TimeStart2, TotalDurationFace2_200s , 
+			MeanDurationFace2_200s, FrequencyFace2_200s  from Summary
 ;
 quit;
 

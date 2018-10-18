@@ -1,6 +1,6 @@
 /*DO NOT HAVE EXPORT CSV IN THIS FILE*/
 
-FILENAME REFFILE '/folders/myfolders/gaze analysys/DiscriptiveData_4gazes_100sec.csv';
+FILENAME REFFILE '/folders/myfolders/gaze analysys/data_combine/DiscriptiveData_4gazes_100sec.csv';
 
 PROC IMPORT DATAFILE=REFFILE
 	DBMS=CSV
@@ -21,7 +21,7 @@ run;
 
 /*
 Get the total, mean, and frequency of the four gaze
-Divide to 30.0 to get the time in second
+Divide to 1.0 to get the time to float
 
 Gaze Type ID:
 Around = 1
@@ -33,8 +33,8 @@ Face = 4
 /*---------------------------get the gaze data for the first 100 seconds----------------------------*/
 proc sql; 
 	create table Around_1_0s as
-   	select Dyad, sum(Duration) / 30.0 as TotalDurationAround1_0s,
-   		mean(Duration) / 30.0 as MeanDurationAround1_0s,
+   	select Dyad, sum(Duration) / 1.0 as TotalDurationAround1_0s,
+   		mean(Duration) / 1.0 as MeanDurationAround1_0s,
    		count(*) as FrequencyAround1_0s
 		from WORK.Gaze1
 		where GazeType = 1 and SectionStartTime = 0
@@ -43,8 +43,8 @@ quit;
 
 proc sql;
 	create table Monitor_1_0s as
-   	select Dyad, sum(Duration) / 30.0 as TotalDurationMonitor1_0s,
-   		mean(Duration) / 30.0 as MeanDurationMonitor1_0s,
+   	select Dyad, sum(Duration) / 1.0 as TotalDurationMonitor1_0s,
+   		mean(Duration) / 1.0 as MeanDurationMonitor1_0s,
    		count(*) as FrequencyMonitor1_0s
 		from WORK.Gaze1
 		where GazeType = 2 and SectionStartTime = 0
@@ -53,8 +53,8 @@ quit;
 
 proc sql;
 	create table Keyboard_1_0s as
-   	select Dyad, sum(Duration) / 30.0 as TotalDurationKeyboard1_0s,
-   		mean(Duration) / 30.0 as MeanDurationKeyboard1_0s,
+   	select Dyad, sum(Duration) / 1.0 as TotalDurationKeyboard1_0s,
+   		mean(Duration) / 1.0 as MeanDurationKeyboard1_0s,
    		count(*) as FrequencyKeyboard1_0s
 		from WORK.Gaze1
 		where GazeType = 3 and SectionStartTime = 0
@@ -63,8 +63,8 @@ quit;
 
 proc sql;
 	create table Face_1_0s as
-   	select Dyad, sum(Duration) / 30.0 as TotalDurationFace1_0s,
-   		mean(Duration) / 30.0 as MeanDurationFace1_0s,
+   	select Dyad, sum(Duration) / 1.0 as TotalDurationFace1_0s,
+   		mean(Duration) / 1.0 as MeanDurationFace1_0s,
    		count(*) as FrequencyFace1_0s
 		from WORK.Gaze1
 		where GazeType = 4 and SectionStartTime = 0
@@ -74,8 +74,8 @@ quit;
 /*---------------------------get the gaze data for the last 100 seconds----------------------------*/
 proc sql; 
 	create table Around_1_200s as
-   	select Dyad, sum(Duration) / 30.0 as TotalDurationAround1_200s,
-   		mean(Duration) / 30.0 as MeanDurationAround1_200s,
+   	select Dyad, sum(Duration) / 1.0 as TotalDurationAround1_200s,
+   		mean(Duration) / 1.0 as MeanDurationAround1_200s,
    		count(*) as FrequencyAround1_200s
 		from WORK.Gaze1
 		where GazeType = 1 and SectionStartTime = 6000
@@ -84,8 +84,8 @@ quit;
 
 proc sql;
 	create table Monitor_1_200s as
-   	select Dyad, sum(Duration) / 30.0 as TotalDurationMonitor1_200s,
-   		mean(Duration) / 30.0 as MeanDurationMonitor1_200s,
+   	select Dyad, sum(Duration) / 1.0 as TotalDurationMonitor1_200s,
+   		mean(Duration) / 1.0 as MeanDurationMonitor1_200s,
    		count(*) as FrequencyMonitor1_200s
 		from WORK.Gaze1
 		where GazeType = 2 and SectionStartTime = 6000
@@ -94,8 +94,8 @@ quit;
 
 proc sql;
 	create table Keyboard_1_200s as
-   	select Dyad, sum(Duration) / 30.0 as TotalDurationKeyboard1_200s,
-   		mean(Duration) / 30.0 as MeanDurationKeyboard1_200s,
+   	select Dyad, sum(Duration) / 1.0 as TotalDurationKeyboard1_200s,
+   		mean(Duration) / 1.0 as MeanDurationKeyboard1_200s,
    		count(*) as FrequencyKeyboard1_200s
 		from WORK.Gaze1
 		where GazeType = 3 and SectionStartTime = 6000
@@ -104,8 +104,8 @@ quit;
 
 proc sql;
 	create table Face_1_200s as
-   	select Dyad, sum(Duration) / 30.0 as TotalDurationFace1_200s,
-   		mean(Duration) / 30.0 as MeanDurationFace1_200s,
+   	select Dyad, sum(Duration) / 1.0 as TotalDurationFace1_200s,
+   		mean(Duration) / 1.0 as MeanDurationFace1_200s,
    		count(*) as FrequencyFace1_200s
 		from WORK.Gaze1
 		where GazeType = 4 and SectionStartTime = 6000
@@ -145,7 +145,7 @@ run;
 
 /*
 Get the total, mean, and frequency of the four gaze
-Divide to 30.0 to get the time in second
+Divide to 1.0 to get the time in second
 
 Gaze Type ID:
 Around = 1
@@ -157,8 +157,8 @@ Face = 4
 /*---------------------------get the gaze data for the first 100 seconds----------------------------*/
 proc sql; 
 	create table Around_2_0s as
-   	select Dyad, sum(Duration) / 30.0 as TotalDurationAround2_0s,
-   		mean(Duration) / 30.0 as MeanDurationAround2_0s,
+   	select Dyad, sum(Duration) / 1.0 as TotalDurationAround2_0s,
+   		mean(Duration) / 1.0 as MeanDurationAround2_0s,
    		count(*) as FrequencyAround2_0s
 		from WORK.Gaze2
 		where GazeType = 1 and SectionStartTime = 0
@@ -167,8 +167,8 @@ quit;
 
 proc sql;
 	create table Monitor_2_0s as
-   	select Dyad, sum(Duration) / 30.0 as TotalDurationMonitor2_0s,
-   		mean(Duration) / 30.0 as MeanDurationMonitor2_0s,
+   	select Dyad, sum(Duration) / 1.0 as TotalDurationMonitor2_0s,
+   		mean(Duration) / 1.0 as MeanDurationMonitor2_0s,
    		count(*) as FrequencyMonitor2_0s
 		from WORK.Gaze2
 		where GazeType = 2 and SectionStartTime = 0
@@ -177,8 +177,8 @@ quit;
 
 proc sql;
 	create table Keyboard_2_0s as
-   	select Dyad, sum(Duration) / 30.0 as TotalDurationKeyboard2_0s,
-   		mean(Duration) / 30.0 as MeanDurationKeyboard2_0s,
+   	select Dyad, sum(Duration) / 1.0 as TotalDurationKeyboard2_0s,
+   		mean(Duration) / 1.0 as MeanDurationKeyboard2_0s,
    		count(*) as FrequencyKeyboard2_0s
 		from WORK.Gaze2
 		where GazeType = 3 and SectionStartTime = 0
@@ -187,8 +187,8 @@ quit;
 
 proc sql;
 	create table Face_2_0s as
-   	select Dyad, sum(Duration) / 30.0 as TotalDurationFace2_0s,
-   		mean(Duration) / 30.0 as MeanDurationFace2_0s,
+   	select Dyad, sum(Duration) / 1.0 as TotalDurationFace2_0s,
+   		mean(Duration) / 1.0 as MeanDurationFace2_0s,
    		count(*) as FrequencyFace2_0s
 		from WORK.Gaze2
 		where GazeType = 4 and SectionStartTime = 0
@@ -198,8 +198,8 @@ quit;
 /*---------------------------get the gaze data for the last 100 seconds----------------------------*/
 proc sql; 
 	create table Around_2_200s as
-   	select Dyad, sum(Duration) / 30.0 as TotalDurationAround2_200s,
-   		mean(Duration) / 30.0 as MeanDurationAround2_200s,
+   	select Dyad, sum(Duration) / 1.0 as TotalDurationAround2_200s,
+   		mean(Duration) / 1.0 as MeanDurationAround2_200s,
    		count(*) as FrequencyAround2_200s
 		from WORK.Gaze2
 		where GazeType = 1 and SectionStartTime = 6000
@@ -208,8 +208,8 @@ quit;
 
 proc sql;
 	create table Monitor_2_200s as
-   	select Dyad, sum(Duration) / 30.0 as TotalDurationMonitor2_200s,
-   		mean(Duration) / 30.0 as MeanDurationMonitor2_200s,
+   	select Dyad, sum(Duration) / 1.0 as TotalDurationMonitor2_200s,
+   		mean(Duration) / 1.0 as MeanDurationMonitor2_200s,
    		count(*) as FrequencyMonitor2_200s
 		from WORK.Gaze2
 		where GazeType = 2 and SectionStartTime = 6000
@@ -218,8 +218,8 @@ quit;
 
 proc sql;
 	create table Keyboard_2_200s as
-   	select Dyad, sum(Duration) / 30.0 as TotalDurationKeyboard2_200s,
-   		mean(Duration) / 30.0 as MeanDurationKeyboard2_200s,
+   	select Dyad, sum(Duration) / 1.0 as TotalDurationKeyboard2_200s,
+   		mean(Duration) / 1.0 as MeanDurationKeyboard2_200s,
    		count(*) as FrequencyKeyboard2_200s
 		from WORK.Gaze2
 		where GazeType = 3 and SectionStartTime = 6000
@@ -228,8 +228,8 @@ quit;
 
 proc sql;
 	create table Face_2_200s as
-   	select Dyad, sum(Duration) / 30.0 as TotalDurationFace2_200s,
-   		mean(Duration) / 30.0 as MeanDurationFace2_200s,
+   	select Dyad, sum(Duration) / 1.0 as TotalDurationFace2_200s,
+   		mean(Duration) / 1.0 as MeanDurationFace2_200s,
    		count(*) as FrequencyFace2_200s
 		from WORK.Gaze2
 		where GazeType = 4 and SectionStartTime = 6000
@@ -288,6 +288,13 @@ proc means data=Summary n mean max min range std fw=8; /*fw is field width, whic
    var FrequencyAround1_0s FrequencyAround1_200s FrequencyAround2_0s FrequencyAround2_200s 
    		FrequencyFace1_0s FrequencyFace1_200s FrequencyFace2_0s FrequencyFace2_200s;
    title 'Summary of Frequency of gaze in 4 categories and 2 conversation';
+run;
+
+/*exporting data*/
+proc export data= SUMMARY
+outfile='/folders/myfolders/gaze analysys/data_combine/SummaryGaze.csv'
+dbms=csv
+replace;
 run;
 
 /*-------------------------Running the Paired T-Test for gazes between conversation------------------------------------------*/
