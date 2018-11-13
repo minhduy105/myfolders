@@ -45,6 +45,8 @@ proc sql;
 		inner join WORK.IMPORT2 Char on Gaze.Dyad = Char.hdyad;
 quit;	
 
+
+
 /* 
 0 is male (H) - male (S)
 1 is male (H) - female (S)
@@ -59,7 +61,7 @@ proc sql;
 quit;
 
 proc sql;
-	create table Summary as
+	create table Summary_p as
 	select *, hxboxexp + hkeyexp as htechexposure,
 			case
 			when hxboxexp <= 2 then 2
@@ -68,9 +70,23 @@ proc sql;
             end as hxboxshorten,
             case
 			when hkeyexp <= 3 then 3
-            end as hkeyshorten
+            end as hkeyshorten,
+            Aver_sia2 - Aver_sia1 as Diff_sia,
+            Aver_hia2 - Aver_hia1 as Diff_hia
+            
+            
       from Summary_1;
 quit;
+
+
+proc sql;
+	create table Summary as
+	select *
+    from Summary_p
+    where hknowpar < 4 and sknowpar < 4
+    ;
+quit;
+
 
 
 /*analysis the data*/
@@ -84,8 +100,8 @@ run;
 
 proc ttest data=Summary order=data
            alpha=0.05 test=diff sides=2; /* two-sided test of diff between group means */
-	paired Aver_sia1 * Aver_sia2
-			Aver_hia1 * Aver_hia2
+	paired Aver_sia2 * Aver_sia1
+			Aver_hia2 * Aver_hia1
 			Aver_hia1 * Aver_sia1
 			Aver_hia2 * Aver_sia2
 			;
@@ -97,6 +113,14 @@ data want;
    method = 'Aver_hia1'; Value=Aver_hia1;output;
    keep method value;
 run;
+
+proc sql;
+	create table Freq_BothSex as
+	select BothSex, count(*) as fre
+	from Summary
+	group by BothSex;
+quit;
+
 
 proc ttest data=want alpha=0.05 cochran ci=equal umpu;
   class method;
@@ -120,7 +144,7 @@ proc corr data=Summary;
 	var  Aver_sia1 Aver_sia2
 		Aver_hia1 Aver_hia2;
 run;
-
+/*
 proc corr data=Summary;
 	var  Aver_sia1 Aver_sia2
 		Aver_hia1 Aver_hia2;
@@ -152,6 +176,7 @@ proc ttest data=Summary alpha=0.05 cochran ci=equal umpu;
 	run;
 
 
+
 proc glm data=Summary;
 	class hxboxshorten;
 	model
@@ -162,7 +187,7 @@ proc glm data=Summary;
 		contrast 'Compare 1st & 2nd with 3rd grps' hxboxshorten -3 1 2;
 run;
 
-
+*/
 
 
 /*--------------------------------Draw plot-box -----------------------------------------------------*/
@@ -181,7 +206,7 @@ proc sql; /*adding new column*/
 quit;
 
 
-proc sql;/*create new table for box-plot, need ID or Union will combine similar value*/
+proc sql;/*create new table for the test gender in converse 1*/
 create table Summary_Rapport_Gender_1 as 
 	select Dyad, hsex as Gender, AUN as Person, Cov1 as Conversation, Aver_hia1 as Rapport from Summary
 	union
@@ -194,7 +219,7 @@ proc ttest data=Summary_Rapport_Gender_1 alpha=0.05 cochran ci=equal umpu;
   var Rapport;
 run;
 
-proc sql;/*create new table for box-plot, need ID or Union will combine similar value*/
+proc sql;/*create new table for the test gender in converse 2*/
 create table Summary_Rapport_Gender_2 as 
 	select Dyad, hsex as Gender, AUN as Person, Cov2 as Conversation, Aver_hia2 as Rapport from Summary
 	union
@@ -206,12 +231,26 @@ proc ttest data=Summary_Rapport_Gender_2 alpha=0.05 cochran ci=equal umpu;
   var Rapport;
 run;
 
+proc sql;/*create new table for the test difference in gender rating*/
+create table Summary_Rapport_Gender_2 as 
+	select Dyad, hsex as Gender, AUN as Person, Diff_hia as Rapport from Summary
+	union
+	select Dyad, ssex, CPN, Diff_sia  from Summary;
+quit;
 
+proc ttest data=Summary_Rapport_Gender_2 alpha=0.05 cochran ci=equal umpu;
+  class Gender;
+  var Rapport;
+run;
+
+/*
 proc glm data=Summary_Rapport_Gender_2;
 	class Gender Person;
 	model
    		Rapport = Gender Person Gender*Person / ss1 ss2 ss3;	
 run;
+*/
+
 
 proc sql;/*create new table for box-plot, need ID or Union will combine similar value*/
 create table Summary_box_plot as 
@@ -230,3 +269,53 @@ proc sgplot data=Summary_box_plot;
   YAXIS LABEL = 'Rapport';
   run;
 
+title 'Summary_H_M';
+proc sql; 
+	create table Summary_H_M as
+   	select *
+   		from Summary
+   		where hsex = 0;
+quit;
+
+proc ttest data = Summary_H_M  h0=0 plots(showh0) sides=u alpha=0.1;
+      var Diff_hia;
+   run;
+
+
+title 'Summary_H_F';
+proc sql; 
+	create table Summary_H_F as
+   	select *
+   		from Summary
+   		where hsex = 1;
+quit;
+
+proc ttest data = Summary_H_F  h0=0 plots(showh0) sides=u alpha=0.1;
+      var Diff_hia;
+   run;
+
+
+title 'Summary_S_M';
+proc sql; 
+	create table Summary_S_M as
+   	select *
+   		from Summary
+   		where ssex = 0;
+quit;
+
+proc ttest data = Summary_S_M  h0=0 plots(showh0) sides=u alpha=0.1;
+      var Diff_sia;
+   run;
+
+
+title 'Summary_S_F';
+proc sql; 
+	create table Summary_S_F as
+   	select *
+   		from Summary
+   		where ssex = 1;
+quit;
+
+proc ttest data = Summary_S_F  h0=0 plots(showh0) sides=u alpha=0.1;
+      var Diff_sia;
+   run;

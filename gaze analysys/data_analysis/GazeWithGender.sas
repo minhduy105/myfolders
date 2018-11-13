@@ -88,11 +88,19 @@ PROC FREQ DATA=Summary;
 RUN;
 
 proc sql;
-	create table Freq as
+	create table Freq_1 as
 	select hsex, htechexposure, count(*) as fre
 	from Summary
 	group by hsex, htechexposure;
 quit;
+
+proc sql;
+	create table Freq_BothSex as
+	select BothSex, count(*) as fre
+	from Summary
+	group by BothSex;
+quit;
+
 
 proc ttest data=Summary cochran ci=equal umpu;
 	class ssex;

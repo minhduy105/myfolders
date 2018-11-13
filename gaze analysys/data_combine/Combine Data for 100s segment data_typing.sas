@@ -4,7 +4,7 @@ libname sql 'SAS-library';
 
 FILENAME REFFILE '/folders/myfolders/gaze analysys/data_combine/DiscriptiveData_5talks_H_100sec.csv';
 
-FILENAME Outgaze '/folders/myfolders/gaze analysys/data_combine/SummaryGaze.csv';
+FILENAME Outgaze '/folders/myfolders/gaze analysys/data_combine/SummaryGaze_100s_typing.csv';
 
 FILENAME Outtype '/folders/myfolders/gaze analysys/data_combine/SummaryTyping.csv';
 
